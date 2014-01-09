@@ -26,7 +26,10 @@ stations<-readShapePoints("input/stationmap/stationmap.shp")
 ###
 
 #### MAKE TIME SERIES ####
-
+  library("zoo")
+  cmorph.ts=lapply(as.data.frame(cmorph.extr), 
+                   function(x) zoo(x, order.by=time))
+  #conversion of matrix to data frame is crucial
 ###
 
 ######### END #####

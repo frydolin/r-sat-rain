@@ -5,11 +5,9 @@
 
 #### SET UP ####
   # call libraries
-  library("SDMTools")
+  library("sp")
   library("raster")
   
-  source("scripts/functions.R")
-
 ####PERSIANN DATA####
   # reads in daily persiann data and converts it to raster object.
   # PERSIANN data is in ESRI asc format, but correctly subsetted
@@ -25,16 +23,18 @@
   } 
   persiann=brick(persiann.rlist)
   rm(i, asc.tmp, persiann.rlist)
-  str(persiann)
-  names(persiann)
-  plot(persiann[[4]])
+# 
+#   str(persiann)
+#   names(persiann)
+#   plot(persiann[[4]])
 
 #### CMORPH DATA ####
   library("raster")
   cmorph<-brick("input/CMORPH/cmorph.nc", varname="cmorph")
-  str(cmorph)
-  names(cmorph)    
-  plot(cmorph[[4]])
+
+#   str(cmorph)
+#   names(cmorph)    
+#   plot(cmorph[[4]])
 ###
 
 #### TIME ####
