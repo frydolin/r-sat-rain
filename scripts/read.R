@@ -21,12 +21,10 @@
   persiann.rlist=list() #initialize
   for (i in 1:length(files)) {
     asc.tmp    =read.asc(file=files[i])
-    raster.tmp =raster(asc.tmp)
-    persiann.rlist[i]=raster.tmp
-  }  #there is an error for unknown reasons, but it runs through, takes time however
-
+    persiann.rlist[i]=raster(asc.tmp)
+  } 
   persiann=brick(persiann.rlist)
-  rm(i, asc.tmp, raster.tmp, persiann.rlist)
+  rm(i, asc.tmp, persiann.rlist)
   str(persiann)
   names(persiann)
   plot(persiann[[4]])
@@ -37,7 +35,10 @@
   str(cmorph)
   names(cmorph)    
   plot(cmorph[[4]])
+###
 
-
+#### TIME ####
+#create time vector
+time=seq(as.Date("2001-01-01"), as.Date("2012-12-31"), by="day")
 
 ####### END read.R #####
