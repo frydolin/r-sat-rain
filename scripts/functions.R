@@ -65,3 +65,43 @@ basic.aggregate=function(x, fun, na.rm=FALSE, opath, stnames){
 }
 
 ###
+
+#### corgr ####
+# own version of correlograms made by corrgram
+# corgr creates *.png files in fpath
+## make sure directory exists!
+## x: should be a data matrix (as in the normal corrgram() function)
+## type: is only for naming e.g. daily, monthly 
+sat.corgr=function(x, type, fpath, station){
+  require("corrgram")
+  name=paste(fpath,"/",type,"_corgr_",station,".png", sep ="")  # filename
+  png(filename=name, width=600, height=600, units="px")		# open *.png write
+  corrgram(x, lower.panel=panel.pie, upper.panel=panel.conf, 
+            main=paste("Correlation between", type, "rainfall estimations for", station))
+  dev.off()							# close write
+}
+###
+#### Scatterplot Matrix ####
+### panel.2lines function ###
+# creates lines as input for a scatterplotmatrix
+# lm regression
+# 0,1 abline
+panel.2lines <- function(x,y,...) {
+  points(x,y)
+  abline(0,1,col="red")
+  abline(lm(y~x),col="blue")
+}
+###
+
+### scatterMatrix###
+## x: should be a data matrix (as in the normal corrgram() function)
+## type: is only for naming e.g. daily, monthly 
+sat.scatterMatrix=function(x, xylim, type, fpath, station){
+  name=paste(fpath,"/",type,"_scatter_",station,".png", sep ="")  # filename
+  png(filename=name, width=800, height=800, units="px")  	# open *.png write
+  pairs(x, upper.panel=NULL, lower.panel=panel.2lines, 
+        xlim=xylim, ylim=xylim,
+        main=paste("Correlation between", type, "rainfall estimations for", station))
+  dev.off()							# close write
+}
+###

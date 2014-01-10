@@ -4,6 +4,7 @@
 ## and outputs summary tables 
 ## also ground data is read and necessary data conversions performed
 
+source("scripts/functions.R")
 
 #### AGGREGATION ####
 ## see README for variable naming convention 
@@ -14,20 +15,21 @@
 #cmorph
   opath="output/cmorph"
   dir.create(opath)
-  cmorph.ag=basic.aggregate(cmorph.ts, fun=mean, opath=opath, 
+  cmorph.ag=basic.aggregate(cmorph.ts, fun=mean, na.rm=TRUE, opath=opath, 
                             stnames=stations$ID)
 #persiann
-  opath="output/cmorph"
+  opath="output/persiann"
   dir.create(opath)
-  persiann.ag=basic.aggregate(persiann.ts, fun=mean, opath=opath, 
+  persiann.ag=basic.aggregate(persiann.ts, fun=mean, na.rm=TRUE, opath=opath, 
                             stnames=stations$ID)
 
 #trmm3b43
   opath="output/trmm3b43"
   dir.create(opath)
-  trmm3b43.ag=basic.aggregate(trmm3b43.ts, fun=mean, opath=opath, 
+  trmm3b43.ag=basic.aggregate(trmm3b43.ts, fun=mean, na.rm=TRUE, opath=opath, 
                             stnames=stations$ID)
 
+#rm(cmorph.ts, persiann.ts, trmm3b43.ts) #they are now part of the *.ag lists
 ###
 
 #### LOAD IN ALL GROUND DATA ####
@@ -57,28 +59,31 @@
   daily.comp=list()
   for (i in names(gdata$d_df))
   {
-    daily.comp[[i]]=(
-      assign(paste(i,"d_df", sep="_"),
-             cbind(gdata$d_df[,i],cmorph.ag$d_df[,i], persiann.ag$d_df[,i])))
-    colnames=c("Ground", "CMORPH", "PERSIANN")
+    daily.comp[[i]]=
+      (                  cbind(gdata$d_df[,i],cmorph.ag$d_df[,i], 
+                         persiann.ag$d_df[,i])
+      )
+    colnames(daily.comp[[i]])=c("Ground", "CMORPH", "PERSIANN")
   }
 #monthly
   monthly.comp=list()
   for (i in names(gdata$m_df))
   {
-    monthly.comp[[i]]=(
-      assign(paste(i,"m_df", sep="_"),
-             cbind(gdata$m_df[,i],cmorph.ag$m_df[,i], persiann.ag$m_df[,i],trmm3b43.ag$m_df[,i] )))
-    colnames=c("Ground", "CMORPH", "PERSIANN", "TRMM")
+    monthly.comp[[i]]=
+      (                  cbind(gdata$m_df[,i],cmorph.ag$m_df[,i], 
+                         persiann.ag$m_df[,i], trmm3b43.ag$m_df[,i])
+      )
+    colnames(monthly.comp[[i]])=c("Ground", "CMORPH", "PERSIANN", "TRMM")
   }
 #yearly
   yearly.comp=list()
   for (i in names(gdata$y_df))
   {
-    yearly.comp[[i]]=(
-      assign(paste(i,"y_df", sep="_"),
-             cbind(gdata$y_df[,i],cmorph.ag$y_df[,i], persiann.ag$y_df[,i],trmm3b43.ag$y_df[,i] )))
-    colnames=c("Ground", "CMORPH", "PERSIANN", "TRMM")
+    yearly.comp[[i]]=
+      (                  cbind(gdata$y_df[,i],cmorph.ag$y_df[,i], 
+                               persiann.ag$y_df[,i], trmm3b43.ag$y_df[,i])
+      )
+    colnames(yearly.comp[[i]])=c("Ground", "CMORPH", "PERSIANN", "TRMM")
   }
 
 #### CLEAN UP ####

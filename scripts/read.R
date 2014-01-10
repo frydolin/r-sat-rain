@@ -7,6 +7,7 @@
   # call libraries
   library("sp")
   library("raster")
+  library("SDMTools")
   
 ####PERSIANN DATA####
   # reads in daily persiann data and converts it to raster object.
@@ -23,7 +24,9 @@
     persiann.rlist[i]=raster(asc.tmp)
   } 
   persiann=brick(persiann.rlist)
+#cleanup
   rm(i, asc.tmp, persiann.rlist)
+  rm(fpath, files)
 # 
 #   str(persiann)
 #   names(persiann)
@@ -47,14 +50,15 @@
   # 2001-2012 start date: 2001-01-01
   library("raster")
   trmm3b43<-brick("input/TRMM3B43/TRMM3B43-rate.nc")#, varname="cmorph")
-  str(trmm3b43)
-  names(trmm3b43)    
-  plot(trmm3b43[[4]])
+#   str(trmm3b43)
+#   names(trmm3b43)    
+#   plot(trmm3b43[[4]])
 ###
 
 #### TIME ####
 #create time vector
 time.d=seq(as.Date("2001-01-01"), as.Date("2012-12-31"), by="day")
 time.m=seq(as.Date("2001-01-01"), as.Date("2012-12-31"), by="month")
+###
 
 ####### END read.R #####
