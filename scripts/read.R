@@ -33,11 +33,10 @@
 #   plot(persiann[[4]])
 
 #### CMORPH DATA ####
-  library("raster")
   # cmorph data already converted in one *.nc file
   # rainfall in mm/day
   # 2001-2012 start date: 2001-01-01
-  cmorph<-brick("input/CMORPH/cmorph.nc", varname="cmorph")
+  cmorph<-brick("input/CMORPH/cmorph.nc", varname="cmorph", crs=projection)
 
 #   str(cmorph)
 #   names(cmorph)    
@@ -56,9 +55,10 @@
 ###
 
 #### TIME ####
-#create time vector
+#create time vectors
 time.d=seq(as.Date("2001-01-01"), as.Date("2012-12-31"), by="day")
 time.m=seq(as.Date("2001-01-01"), as.Date("2012-12-31"), by="month")
+time.y=seq(as.Date("2001-01-01"), as.Date("2012-12-31"), by="year")
 ###
 
 ####### END read.R #####

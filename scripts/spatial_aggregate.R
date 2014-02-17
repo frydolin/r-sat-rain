@@ -33,15 +33,13 @@ da.cmorph=disaggregate(crop.cmorph, fact=5)
 #   str(mask.cmorph)
 rm(crop.cmorph, da.cmorph)
 
-#### Make time series of mean values ####
-s1=cellStats(mask.cmorph[[4]],stat=mean)
-
 #### Convert to raster time series and aggregate####
 # CMORPH
-  cmorph.d_ts=rts(masked.cmorph, time=time.d)
-  #str(cmorph.rts@time)
+  cmorph.d_ts=rts(mask.cmorph, time=time.d)
   cmorph.m_ts=apply.monthly(cmorph.d_ts,mean)
+  cmorph.b.m_ts=as.raster(cmorph.m_ts)
   cmorph.y_ts=apply.yearly(cmorph.d_ts,mean)
+class(cmorph.y_ts@raster)
 
 #   plot(cmorph.m_ts, y=c(1:12))
 #   str(cmorph)
@@ -49,18 +47,12 @@ s1=cellStats(mask.cmorph[[4]],stat=mean)
 # PERSIANN
 # TRMM
 
-#### Catchment wide means ####
-
-
-# Correlation between rasters
-plot(cmorph.rts, y=1)
-str(cmorph[[1]])
-cor(values(cmorph[[1]]), values(cmorph[[3]]))
-
-(mean(cmorph.rts, na.rm=TRUE))
-endpoints(cmorph.rts)
-test=period.apply(cmorph.rts, 4383, mean)
-plot(test)
-plot(cmorph.y_ts)
-plot(catchment_shp, add=TRUE)
-str(test)
+#### Make time series of catchment wide means values ####
+## They can be compared to IDW spatial interpolations of mean values for the whole catchment
+library("zoo")
+cmorph.sp_d=zoo(cellStats(cmorph.d_ts@raster,stat=mean), order.by=time.d)
+cmorph.sp_m=zoo(cellStats(cmorph.m_ts@raster,stat=mean), order.by=time.m)
+cmorph.sp_y=zoo(cellStats(cmorph.y_ts@raster,stat=mean), order.by=time.y)
+###
+plot(cmorph.sp_y)
+#### END ####
