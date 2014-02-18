@@ -1,8 +1,29 @@
 #### Spatial Comparison ####
+
+#### COMPARE WITH INTERPOLATED DATA ####
+## Read in interpolated data
+# so far only monthly
+idw=read.csv("input/sek_tay_m_idw.csv")
+idw_ts=list(zoo(idw$PTayan, order.by=time.m),zoo(idw$PSekayam, order.by=time.m) )
+
+## Comparative plots
+# Daily
+par(mfrow=c(1,length(cmorph.sp_m)))
+for (i in 1:length(cmorph.sp_m)){
+  plot(cmorph.sp_m[[i]]~idw_ts[[i]], xlim=c(0,20), ylim=c(0,20), xlab="IDW (mm/day)", ylab="CMORPH (mm/day)", main=paste("Comparison of monthly values for",names(cmorph.sp_m)[[i]], "subbasin"))
+  abline(0,1,col="red") 
+}
+# Monthly
+
+
+# Yearly
+
+#### END ####
 library("sp")
 library("maptools")
 library("rgeos")
 library("raster")
+
 projection=CRS(projection(cmorph))
 catchment_shp  <-readShapePoly(fn="input/Kapuas_catchment//Kapuas-catchment2.shp", proj4string=projection)
 extent=extent(catchment_shp)
