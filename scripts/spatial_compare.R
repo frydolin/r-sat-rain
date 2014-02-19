@@ -3,19 +3,27 @@
 #### COMPARE WITH INTERPOLATED DATA ####
 ## Read in interpolated data
 # so far only monthly
-idw=read.csv("input/subcatch_m_idw.csv")
-idw_ts=list(zoo(idw$PTayan, order.by=time.m),zoo(idw$PSekayam, order.by=time.m),zoo(idw$PBelitang, order.by=time.m) )
+  idw=read.csv("input/subcatch_m_idw.csv")
+  idw_ts=list(zoo(idw$PTayan, order.by=time.m),zoo(idw$PSekayam, order.by=time.m),zoo(idw$PBelitang, order.by=time.m) )
 
 ## Comparative plots
 # Daily
-par(mfrow=c(1,length(cmorph.sp_m)))
-par(mar=c(4,4,4,1)+0.2)
-for (i in 1:length(cmorph.sp_m)){
-  plot(cmorph.sp_m[[i]]~idw_ts[[i]], xlim=c(0,20), ylim=c(0,20), xlab="IDW (mm/day)", ylab="CMORPH (mm/day)", main=paste("Monthly values for",names(cmorph.sp_m)[[i]], "subbasin"))
-  abline(0,1,col="red") 
-}
 # Monthly
+  par(mfrow=c(3,length(cmorph.sp_m)))
+  par(mar=c(4,4,2,0)+0.2)
+  for (i in 1:length(persiann.sp_m)){
+    plot(persiann.sp_m[[i]]~idw_ts[[i]], xlim=c(0,20), ylim=c(0,20), xlab="IDW (mm/day)", ylab="PERSIANN (mm/day)", main=paste("Monthly values for",names(persiann.sp_m)[[i]], "subbasin"))
+    abline(0,1,col="red", lwd=2) 
+  }
+  for (i in 1:length(cmorph.sp_m)){
+    plot(cmorph.sp_m[[i]]~idw_ts[[i]], xlim=c(0,20), ylim=c(0,20), xlab="IDW (mm/day)", ylab="CMORPH (mm/day)")
+    abline(0,1,col="red",lwd=2) 
+  }
 
+  for (i in 1:length(trmm.sp_m)){
+    plot(trmm.sp_m[[i]]~idw_ts[[i]], xlim=c(0,20), ylim=c(0,20), xlab="IDW (mm/day)", ylab="TRMM3B42 (mm/day)")
+    abline(0,1,col="red",lwd=2) 
+  }
 
 # Yearly
 
