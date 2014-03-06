@@ -9,50 +9,30 @@ source("scripts/functions.R")
 #### AGGREGATION ####
 ## see README for variable naming convention 
 ## aggregation with mean i.e. output is average daily rainfall per week, month, year, ... ##
-## and also sums ##
 ## na.rm currently FALSE 
 
 #cmorph
   opath="output/cmorph"
   dir.create(opath)
-  cmorph.ag=basic.aggregate(cmorph.ts, fun=mean, na.rm=TRUE, opath=opath, 
-                            stnames=stations$ID)
+  cmorph.ag=basic.aggregate(cmorph.ts, fun=mean, na.rm=TRUE, opath=opath, stnames=stations_shp$ID)
 #persiann
   opath="output/persiann"
   dir.create(opath)
-  persiann.ag=basic.aggregate(persiann.ts, fun=mean, na.rm=TRUE, opath=opath, 
-                            stnames=stations$ID)
+  persiann.ag=basic.aggregate(persiann.ts, fun=mean, na.rm=TRUE, opath=opath, stnames=stations_shp$ID)
 
-#trmm3b43
-  opath="output/trmm3b43"
+#trmm3b42
+  opath="output/trmm"
   dir.create(opath)
-  trmm3b43.ag=basic.aggregate(trmm3b43.ts, fun=mean, na.rm=TRUE, opath=opath, 
-                            stnames=stations$ID)
+  trmm.ag=basic.aggregate(trmm.ts, fun=mean, na.rm=TRUE, opath=opath, stnames=stations_shp$ID)
 
-#rm(cmorph.ts, persiann.ts, trmm3b43.ts) #they are now part of the *.ag lists
+rm(cmorph.ts, persiann.ts, trmm.ts) #they are now part of the *.ag lists
 ###
-
-#### LOAD IN ALL GROUND DATA ####
-# Get file names
-  fpath='input/ground'
-  files= list.files(path=fpath, pattern=".csv", full.names=TRUE)
-# Read in
-  gdata=lapply(files, read.csv, na.strings = "NA")
-
-# change time column to row. names, assign column names
-  for(i in 1:length(gdata)){
-    row.names(gdata[[i]])=gdata[[i]]$X
-    gdata[[i]]=gdata[[i]][,-1]
-  }
-  names(gdata)=c("d_df", "m_df", "y_df")
-
-# subset 
-# note that end date is the same then for satellite time series
+#### SUBSET GROUND DATA ####
+# note that end date is the same as for satellite time series
 # only for this reason subsetting is possible like this
   gdata$d_df=gdata$d_df[(nrow(gdata$d_df)-nrow(cmorph.ag$d_df)+1):nrow(gdata$d_df),]
   gdata$m_df=gdata$m_df[(nrow(gdata$m_df)-nrow(cmorph.ag$m_df)+1):nrow(gdata$m_df),]
   gdata$y_df=gdata$y_df[(nrow(gdata$y_df)-nrow(cmorph.ag$y_df)+1):nrow(gdata$y_df),]
-### END LOAD DATA ###
 
 #### MAKE A DATAFRAME PER STATION FOR EASY COMPARISON ####
 # DAILY
@@ -61,17 +41,18 @@ source("scripts/functions.R")
   {
     daily.comp[[i]]=
       (                  cbind(gdata$d_df[,i],cmorph.ag$d_df[,i], 
-                         persiann.ag$d_df[,i])
+                         persiann.ag$d_df[,i],trmm.ag$d_df[,i])
       )
-    colnames(daily.comp[[i]])=c("Ground", "CMORPH", "PERSIANN")
+    colnames(daily.comp[[i]])=c("Ground", "CMORPH", "PERSIANN", "TRMM")
   }
+
 #monthly
   monthly.comp=list()
   for (i in names(gdata$m_df))
   {
     monthly.comp[[i]]=
       (                  cbind(gdata$m_df[,i],cmorph.ag$m_df[,i], 
-                         persiann.ag$m_df[,i], trmm3b43.ag$m_df[,i])
+                         persiann.ag$m_df[,i], trmm.ag$m_df[,i])
       )
     colnames(monthly.comp[[i]])=c("Ground", "CMORPH", "PERSIANN", "TRMM")
   }
@@ -81,15 +62,15 @@ source("scripts/functions.R")
   {
     yearly.comp[[i]]=
       (                  cbind(gdata$y_df[,i],cmorph.ag$y_df[,i], 
-                               persiann.ag$y_df[,i], trmm3b43.ag$y_df[,i])
+                               persiann.ag$y_df[,i], trmm.ag$y_df[,i])
       )
     colnames(yearly.comp[[i]])=c("Ground", "CMORPH", "PERSIANN", "TRMM")
   }
-
+###
 #### CLEAN UP ####
 # remove variables and data not needed anymore
 rm(i)
-rm(files, opath, fpath) 
+rm(opath, fpath) 
 ### END CLEAN UP ###
 
 ########## END aggregate.R #############

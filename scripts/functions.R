@@ -63,9 +63,7 @@ basic.aggregate=function(x, fun, na.rm=FALSE, opath, stnames){
   names(output)=c("d_ts", "d_df", "m_ts", "m_df", "y_ts", "y_df", "davbm", "davbm_df")
   return(output)
 }
-
-###
-
+####
 #### corgr ####
 # own version of correlograms made by corrgram
 # corgr creates *.png files in fpath
@@ -75,10 +73,9 @@ basic.aggregate=function(x, fun, na.rm=FALSE, opath, stnames){
 sat.corgr=function(x, type, fpath, station){
   require("corrgram")
   name=paste(fpath,"/",type,"_corgr_",station,".png", sep ="")  # filename
-  png(filename=name, width=600, height=600, units="px")		# open *.png write
-  corrgram(x, lower.panel=panel.pie, upper.panel=panel.conf, 
-            main=paste("Correlation between", type, "rainfall estimations for", station))
-  dev.off()							# close write
+  png(filename=name, pointsize = 11, width=16, height=16, units="cm", res=300)  # open *.svg write
+  corrgram(x, lower.panel=panel.pie, upper.panel=panel.conf, diag.panel=panel.density, main="", oma=c(0,0,0,0))
+  dev.off()  						# close write
 }
 ###
 #### Scatterplot Matrix ####
@@ -87,21 +84,20 @@ sat.corgr=function(x, type, fpath, station){
 # lm regression
 # 0,1 abline
 panel.2lines <- function(x,y,...) {
-  points(x,y)
+  points(y~x, cex=0.7)
   abline(0,1,col="red")
-  abline(lm(y~x),col="blue")
+  abline(lm(y~x),col="darkblue")
 }
 ###
-
 ### scatterMatrix###
 ## x: should be a data matrix (as in the normal corrgram() function)
 ## type: is only for naming e.g. daily, monthly 
 sat.scatterMatrix=function(x, xylim, type, fpath, station){
   name=paste(fpath,"/",type,"_scatter_",station,".png", sep ="")  # filename
-  png(filename=name, width=800, height=800, units="px")  	# open *.png write
-  pairs(x, upper.panel=NULL, lower.panel=panel.2lines, 
-        xlim=xylim, ylim=xylim,
-        main=paste("Correlation between", type, "rainfall estimations for", station))
-  dev.off()							# close write
+  png(filename=name, pointsize = 11, width=16, height=16, units="cm", res=300) # open *.png write
+  pairs(x, upper.panel=NULL, lower.panel=panel.2lines, xlim=xylim, ylim=xylim, 
+        las=1, gap=0.3, oma=c(2.5,2.5,0,0), cex.labels=1.5, family="Lato"
+  )
+  dev.off()  # close write			# close write
 }
 ###

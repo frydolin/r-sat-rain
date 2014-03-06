@@ -1,4 +1,4 @@
-######### SATELLITE PRECIPITATION ESTIMATES – ASSESSING THERI FEASABILITY FOR KAPUAS CATCHMENT ######
+######### SATELLITE PRECIPITATION ESTIMATES – ASSESSING THEIR FEASABILITY FOR KAPUAS CATCHMENT ######
 
 ## read.R reads in the data
 
@@ -7,7 +7,9 @@
   library("sp")
   library("raster")
   library("SDMTools")
-###
+  ## set up time locale to get English time format
+  Sys.setlocale("LC_TIME", "en_US.UTF-8") 
+### END SET UP ###
 
 #### TIME ####
 #create time vectors
@@ -40,7 +42,6 @@ time.y=seq(as.Date("2001-01-01"), as.Date("2012-12-31"), by="year")
 ####PERSIANN DATA####
   # persiann data already converted in one *.nc file
   # rainfall in mm/day
-  # rainfall in mm/day
   # 2001-2012 start date: 2001-01-01
   persiann<-brick("input/persiann.nc", varname="variable", crs=projection)
 #   str(persiann)
@@ -52,7 +53,6 @@ time.y=seq(as.Date("2001-01-01"), as.Date("2012-12-31"), by="year")
   # rainfall in mm/day
   # 2001-2012 start date: 2001-01-01
   cmorph<-brick("input/cmorph.nc", varname="cmorph", crs=projection)
-
 #   str(cmorph)
    names(cmorph)=time.d
 #   plot(cmorph[[4]])
@@ -67,4 +67,15 @@ time.y=seq(as.Date("2001-01-01"), as.Date("2012-12-31"), by="year")
     names(trmm)=time.d
 #    plot(trmm[[4]])
 ###
-####### END read.R #####
+
+#### LOAD IN ALL GROUND DATA ####
+# Get file names
+fpath='input/ground'
+  files= list.files(path=fpath, pattern=".csv", full.names=TRUE)
+  # Read in
+  gdata=lapply(files, read.csv, na.strings = "NA", row.names=1)
+  names(gdata)=c("d_df", "m_df", "y_df")
+rm(files)
+### END LOAD GROUND DATA###
+
+####### END read.R #######
