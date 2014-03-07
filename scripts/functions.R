@@ -127,7 +127,19 @@ scatter.grid=function(x,xylim, leftsidetext="rainfall at gauge station (mm/day)"
   mtext("satellite rainfall estimate (mm/day)", side = 1, line =2, cex=0.8, outer = TRUE, adj = 0.5, padj = 0.5)
 }
 ###
-#### sp.avg.plot
-sp.avg.plot=function(x, xylim){ 
-
+#### pairw.corr ####
+## x: list of matrices
+## in that matrix first row is compared to other rows
+pairw.corr=function(x){ 
+   corrs=matrix(data=NA,nrow=3, ncol=length(x))
+  for(i in 1:length(x)){
+  cmorph.cor=round(cor(x[[i]][,1],x[[i]][,2], use="pairwise.complete.obs", method="pearson"), digits=4)
+  persiann.cor=round(cor(x[[i]][,1],x[[i]][,3], use="pairwise.complete.obs", method="pearson"), digits=4)
+  trmm.cor=round(cor(x[[i]][,1],x[[i]][,4], use="pairwise.complete.obs", method="pearson"), digits=4)
+  corrs[,i]=rbind(cmorph.cor, persiann.cor, trmm.cor)
+  }
+  dimnames(corrs)=list(c("CMORPH", "PERSIANN", "TRMM 3B42"),c(names(x)))
+  return(corrs)
 }
+
+#### END functions.R ####
