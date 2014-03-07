@@ -9,14 +9,13 @@ par(family="Lato",
     mar=(c(4,4,3,0)+0.2),
     mgp=c(1.8,0.6,0))
 def.par=par(no.readonly = TRUE)
-
-#### legend outside ####
-# par(xpd=TRUE,
-#      mar=(c(4,3,2,6.3))+0.15)
-# leg.out=par(no.readonly = TRUE)
-# par(def.par)
-##
 #### COLOR SCHEME for plots ####
+col.fun <- colorRampPalette(c("#D7635D","peachpuff","royalblue","#023b95"))
+rast.cols=col.fun(20)
+rast.theme<-rasterTheme(region=rast.cols, cex=0.8)
+ label.theme <- list(add.text=list(cex=0.9,fontfamily='Lato'))
+
+
 # For 14 colors
 colors=rainbow(n=14, s = 1, v = 0.8, start = 0.05, end = max(1, 14 - 1)/14, alpha = 1)
 #   pal((colors))

@@ -6,10 +6,7 @@
   library("raster")
   library("zoo")
   library("rts")
-###
-
-#### Spatial Subsetting ####
-  projection=CRS(projection(cmorph))
+### Load shapefiles ###
   shps=list(
       readShapePoly(fn="input//gis//tayan-shp//tayan-shp.shp", proj4string=projection),
       readShapePoly(fn="input//gis//sekayam-shp//sekayam-shp.shp", proj4string=projection),
@@ -17,6 +14,7 @@
         )
   extents=lapply(shps, function(x) extent(x)+0.3)
 
+#### Spatial Subsetting ####
 # 1.Crop area
   crop.area=function(x){
     crop=list()
@@ -28,7 +26,7 @@
   crop.persiann=crop.area(persiann)
   crop.cmorph=crop.area(cmorph)
   crop.trmm=crop.area(trmm)
-  rm(persiann, cmorph, trmm)
+#   rm(persiann, cmorph, trmm)
 
 # 2. divide each cell into 25 cells so as to go from 0.25° to 0.05°
   da.persiann=lapply(crop.persiann, disaggregate, fact=5) 
@@ -52,9 +50,10 @@
 
 #### Convert to raster time series and aggregate####
 # PERSIANN
+  # na.rm is set to TRUE!!
   persiann.d_ts=lapply(mask.persiann, rts, time=time.d)
-  persiann.m_ts=lapply(persiann.d_ts, apply.monthly, mean)
-  persiann.y_ts=lapply(persiann.d_ts, apply.yearly, mean)
+  persiann.m_ts=lapply(persiann.d_ts, apply.monthly, mean,na.rm=TRUE)
+  persiann.y_ts=lapply(persiann.d_ts, apply.yearly, mean,na.rm=TRUE)
 # CMORPH
   cmorph.d_ts=lapply(mask.cmorph, rts, time=time.d)
   cmorph.m_ts=lapply(cmorph.d_ts, apply.monthly, mean)
@@ -69,17 +68,57 @@
 #### Make time series of catchment wide means values ####
 ## They can be compared to IDW spatial interpolations of mean values for the whole catchment
 # PERSIANN
-  persiann.sp_d=lapply(persiann.d_ts, function(x) zoo(cellStats(x@raster,stat=mean), order.by=time.d))
-  persiann.sp_m=lapply(persiann.m_ts, function(x) zoo(cellStats(x@raster,stat=mean), order.by=time.m))
-  sek.persiann.sp_y=lapply(persiann.y_ts, function(x) zoo(cellStats(x@raster,stat=mean), order.by=time.y))
+  persiann.sp.d_ts=lapply(persiann.d_ts, function(x) zoo(cellStats(x@raster,stat=mean), order.by=time.d))
+  persiann.sp.m_ts=lapply(persiann.m_ts, function(x) zoo(cellStats(x@raster,stat=mean), order.by=time.m))
+  persiann.sp.y_ts=lapply(persiann.y_ts, function(x) zoo(cellStats(x@raster,stat=mean), order.by=time.y))
 #CMORPH
-  cmorph.sp_d=lapply(cmorph.d_ts, function(x) zoo(cellStats(x@raster,stat=mean), order.by=time.d))
-  cmorph.sp_m=lapply(cmorph.m_ts, function(x) zoo(cellStats(x@raster,stat=mean), order.by=time.m))
-  sek.cmorph.sp_y=lapply(cmorph.y_ts, function(x) zoo(cellStats(x@raster,stat=mean), order.by=time.y))
+  cmorph.sp.d_ts=lapply(cmorph.d_ts, function(x) zoo(cellStats(x@raster,stat=mean), order.by=time.d))
+  cmorph.sp.m_ts=lapply(cmorph.m_ts, function(x) zoo(cellStats(x@raster,stat=mean), order.by=time.m))
+  cmorph.sp.y_ts=lapply(cmorph.y_ts, function(x) zoo(cellStats(x@raster,stat=mean), order.by=time.y))
 # TRMM
-  trmm.sp_d=lapply(trmm.d_ts, function(x) zoo(cellStats(x@raster,stat=mean), order.by=time.d))
-  trmm.sp_m=lapply(trmm.m_ts, function(x) zoo(cellStats(x@raster,stat=mean), order.by=time.m))
-  sek.trmm.sp_y=lapply(trmm.y_ts, function(x) zoo(cellStats(x@raster,stat=mean), order.by=time.y))
+  trmm.sp.d_ts=lapply(trmm.d_ts, function(x) zoo(cellStats(x@raster,stat=mean), order.by=time.d))
+  trmm.sp.m_ts=lapply(trmm.m_ts, function(x) zoo(cellStats(x@raster,stat=mean), order.by=time.m))
+  trmm.sp.y_ts=lapply(trmm.y_ts, function(x) zoo(cellStats(x@raster,stat=mean), order.by=time.y))
 ###
 
+#### Part II: AGGREGATE ON MAP LEVEL####
+  library("maptools")
+  library("raster")
+  library("rts")
+ ### Load shapefiles ###
+  projection=CRS(projection(cmorph))
+  subcatch_shp <-readShapePoly(fn="input/gis/subcatchments/subcatchments.shp", IDvar="catchment", proj4string=projection)
+  kapuas_shp  <-readShapePoly(fn="input/gis/kapuas-basin//kapuas-basin.shp", IDvar="DN", proj4string=projection)
+  stations_shp<-readShapePoints("input/gis/stationmap/stationmap.shp")
+  stations_shp=stations_shp[c(-8,-9,-13),] # exclude SGU04, SGU19, STG03
+###
+#### Subsetting ####
+  ext=extent(subcatch_shp)+0.4
+  crop.cmorph=crop(cmorph, ext)
+  crop.persiann=crop(persiann, ext)
+  crop.trmm=crop(trmm, ext)
+  srfe_subcatch=list("CMORPH"=crop.cmorph, "PERSIANN"=crop.persiann, "TRMM"=crop.trmm)
+  rm(crop.cmorph, crop.persiann, crop.trmm)
+  srfe_subcatch.da=lapply(srfe_subcatch, disaggregate, fact=5) 
+  rm(srfe_subcatch) 
+  # set again the extent 
+  extnt=extent(109.75,111.75,-0.1,1.25)
+  srfe_subcatch.da.recrop=lapply(srfe_subcatch.da, crop, extnt)
+  mask.srfe_subcatch <-lapply(srfe_subcatch.da.recrop, raster::mask, mask=subcatch_shp)
+   rm(srfe_subcatch.da,srfe_subcatch.da.recrop)
+#### AGGREGATING ####
+  srfe_subcatch.d_ts=lapply(mask.srfe_subcatch, rts, time=time.d)
+  srfe_subcatch.m_ts=lapply(srfe_subcatch.d_ts, apply.monthly, mean)
+  # srfe_subcatch.y_ts=lapply(cmorph.d_ts, apply.yearly, mean)
+  rm(srfe_subcatch.d_ts)
+### by month mean ###
+  mask.srfe_subcatch.Z=lapply(mask.srfe_subcatch,setZ, z=time.d, name="time")
+  mon.fac <- format.Date(time.d,format="%m")
+  mon.fac <- factor(mon.fac)
+  subcatch.srfe.bymonth=lapply(mask.srfe_subcatch.Z, zApply, by=mon.fac, fun=mean, name='months')
+  #names(subcatch.idw.bymonth)=format.Date(datesx,format="%b")[1:12]
+  rm(mask.srfe_subcatch.Z)
+### Long term mean ###
+  subcatch.srfe.ov.av=lapply(srfe_subcatch.m_ts, period.apply, 144,mean, na.rm=TRUE) #because it's 144 month
+### END AGGREGATION PART II ###
 #### END ####

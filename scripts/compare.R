@@ -3,10 +3,10 @@
 ## compare.R compares satellite and ground data ##
 source("scripts/graphic_pars.R")
 #### CORRELATION ####
-fpath="output/correlation"
+fpath="output/point-to-pixel"
 dir.create(fpath)
 #### CORRELOGRAMS ####
-fpath="output/correlation/correlograms"
+fpath="output/point-to-pixel/correlograms"
 dir.create(fpath)
   
   for (i in 1:length(daily.comp))
@@ -21,7 +21,7 @@ rm(fpath, i, stname)
 ### END CORRGRAMS ###
 
 #### SCATTERPLOT MATRIX ####
-fpath="output/correlation/scatterplotmatrix"
+fpath="output/point-to-pixel/scatterplotmatrix"
 dir.create(fpath)
 for (i in 1:length(daily.comp))
 {
@@ -37,7 +37,9 @@ dev.off()
 rm(fpath, i)
 ### END SCATTERPLOT MATRIX ###
 ### END CORRELATION###
-#### OVERVIEW PER SRFE ####
+
+#### SCATTERPLOT OVERVIEW PER SRFE ####
+fpath="output/point-to-pixel"
 # For daly data
   png(filename="output/daily_allscatterplots.png", pointsize = 11, width=10, height=20, units="cm", res=300)
  scatter.grid(daily.comp, xylim=c(0,120))
@@ -50,6 +52,11 @@ rm(fpath, i)
   png(filename="output/yearly_allscatterplots.png", pointsize = 11, width=10, height=20, units="cm", res=300)
  scatter.grid(yearly.comp, xylim=c(4,14))
   dev.off()
+###
+#### PEARSON CORRELATION PER SRFE ####
+  write.csv(pairw.corr(daily.comp), file=paste(fpath,"/daily_cor.csv", sep=""))
+  write.csv(pairw.corr(monthly.comp), file=paste(fpath,"/monthly_cor.csv", sep=""))
+  write.csv(pairw.corr(yearly.comp), file=paste(fpath,"/yearly_cor.csv", sep=""))
 ###
 
 plot(daily.comp[1][[1]][2,], type="l")
