@@ -38,20 +38,21 @@ rm(fpath, i)
 ### END SCATTERPLOT MATRIX ###
 ### END CORRELATION###
 #### OVERVIEW PER SRFE ####
+# For daly data
+  png(filename="output/daily_allscatterplots.png", pointsize = 11, width=10, height=20, units="cm", res=300)
+ scatter.grid(daily.comp, xylim=c(0,120))
+  dev.off()
 # For monthly data
-xylim=c(0,22)
-png(filename="output/monthly_allscatterplots.png", pointsize = 11, width=10, height=20, units="cm", res=300)
-par(def.par);par(mar=c(0,0,0.2,0.2), oma=c(2,3.5,2.5,0), las=1); par(mfrow=c(length(monthly.comp),3))
-for (i in 1:(length(monthly.comp))){
-    if (i==length(monthly.comp)){ax="s"} else {ax="n"}
-      plot(monthly.comp[i][[1]][,1]~monthly.comp[i][[1]][,2], xlim=xylim, ylim=xylim, xaxt=ax)
-  abline(0,1, col="red")
-  plot(monthly.comp[i][[1]][,1]~monthly.comp[i][[1]][,3], xlim=xylim, ylim=xylim, yaxt="n", xaxt=ax)
-  abline(0,1, col="red")
-  plot(monthly.comp[i][[1]][,1]~monthly.comp[i][[1]][,4], xlim=xylim, ylim=xylim, yaxt="n", xaxt=ax)
-  abline(0,1, col="red")
-}
-dev.off()
+  png(filename="output/monthly_allscatterplots.png", pointsize = 11, width=10, height=20, units="cm", res=300)
+ scatter.grid(monthly.comp, xylim=c(0,24))
+  dev.off()
+# yearly data
+  png(filename="output/yearly_allscatterplots.png", pointsize = 11, width=10, height=20, units="cm", res=300)
+ scatter.grid(yearly.comp, xylim=c(4,14))
+  dev.off()
 ###
 
+plot(daily.comp[1][[1]][2,], type="l")
+str(daily.comp[[1]][1,])
+class(daily.comp[[1]])
 ########## END compare.R #############

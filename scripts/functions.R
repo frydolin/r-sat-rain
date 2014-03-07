@@ -101,3 +101,33 @@ sat.scatterMatrix=function(x, xylim, type, fpath, station){
   dev.off()  # close write			# close write
 }
 ###
+#### scatter.grid####
+scatter.grid=function(x,xylim, leftsidetext="rainfall at gauge station (mm/day)"){
+  
+  source("scripts//graphic_pars.R")
+  par(def.par);
+  par(mar=c(0,0,0.2,0.2), oma=c(5,7.7,1.5,0), las=1); par(mfrow=c(length(x),3));
+  par(cex.axis=1,  cex.lab=1)
+
+  for (i in 1:(length(x))){
+    if (i==length(x)){ax="s"} else {ax="n"}
+    plot(x[[i]][,1]~x[[i]][,2], xlim=xylim, ylim=xylim, xaxt=ax)
+    if(i==1){mtext("CMORPH", side = 3, line = 0.2, cex=0.8)}
+    abline(0,1, col="red")
+    mtext(names(x[i]), side = 2, line = 1.8, cex=0.8)
+    plot(x[[i]][,1]~x[[i]][,3], xlim=xylim, ylim=xylim, yaxt="n", xaxt=ax)
+    if(i==1){mtext("PERSIANN", side = 3, line = 0.2, cex=0.8)}
+    abline(0,1, col="red")
+    plot(x[[i]][,1]~x[[i]][,4], xlim=xylim, ylim=xylim, yaxt="n", xaxt=ax)
+    if(i==1){mtext("TRMM 3B42", side = 3, line = 0.2, cex=0.8)}
+    abline(0,1, col="red")
+    
+  }
+  mtext(leftsidetext, side = 2, line = 6.5, cex=0.8, las=0, outer = TRUE, at = NA,  adj = 0.5, padj = 0.5)
+  mtext("satellite rainfall estimate (mm/day)", side = 1, line =2, cex=0.8, outer = TRUE, adj = 0.5, padj = 0.5)
+}
+###
+#### sp.avg.plot
+sp.avg.plot=function(x, xylim){ 
+
+}

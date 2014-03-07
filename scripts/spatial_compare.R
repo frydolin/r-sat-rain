@@ -1,31 +1,49 @@
 #### Spatial Comparison ####
 
-#### COMPARE WITH INTERPOLATED DATA ####
+#### COMPARE WITH INTERPOLATED CATCHMENT TOTALS####
 ## Read in interpolated data
-# so far only monthly
-  idw=read.csv("input/subcatch_m_idw.csv")
-  idw_ts=list(zoo(idw$PTayan, order.by=time.m),zoo(idw$PSekayam, order.by=time.m),zoo(idw$PBelitang, order.by=time.m) )
+#daily
+  idw.d=read.csv("input/interpoaltion_results//subcatch_d_idw.csv")
+  idw.d_ts=list(zoo(idw.d$PTayan, order.by=time.d),zoo(idw.d$PSekayam, order.by=time.d),zoo(idw.d$PBelitang, order.by=time.d) )
+  names(idw.d_ts)=c("Tayan", "Sekayam", "Belitang")
+#monthly
+  idw.m=read.csv("input/interpoaltion_results//subcatch_m_idw.csv")
+  idw.m_ts=list(zoo(idw.m$PTayan, order.by=time.m),zoo(idw.m$PSekayam, order.by=time.m),zoo(idw.m$PBelitang, order.by=time.m) )
+  names(idw.m_ts)=c("Tayan", "Sekayam", "Belitang")
+
+# aggregate to yearly
+  idw.y_ts=lapply(idw.m_ts, monthly2annual, mean)
 
 ## Comparative plots
+fpath="output/spatial_compare"
+dir.create(fpath)
 # Daily
+daily.sp.comp=list()
+  for (i in 1:length(idw.d_ts)){
+    daily.sp.comp[[i]]=cbind(idw.d_ts[[i]],cmorph.sp.d_ts[[i]], persiann.sp.d_ts[[i]], trmm.sp.d_ts[[i]])}
+names(daily.sp.comp)=names(idw.d_ts)
+
+  png(filename=paste(fpath,"/daily_sp_scatterplot.png", sep=""), pointsize = 11, width=16, height=15, units="cm", res=300)
+  scatter.grid(daily.sp.comp, xylim=c(0,100), leftsidetext="IDW interpolation (mm/day)")
+  dev.off()
+
 # Monthly
-  par(mfrow=c(3,length(cmorph.sp_m)))
-  par(mar=c(4,4,2,0)+0.2)
-  for (i in 1:length(persiann.sp_m)){
-    plot(persiann.sp_m[[i]]~idw_ts[[i]], xlim=c(0,20), ylim=c(0,20), xlab="IDW (mm/day)", ylab="PERSIANN (mm/day)", main=paste("Monthly values for",names(persiann.sp_m)[[i]], "subbasin"))
-    abline(0,1,col="red", lwd=2) 
-  }
-  for (i in 1:length(cmorph.sp_m)){
-    plot(cmorph.sp_m[[i]]~idw_ts[[i]], xlim=c(0,20), ylim=c(0,20), xlab="IDW (mm/day)", ylab="CMORPH (mm/day)")
-    abline(0,1,col="red",lwd=2) 
-  }
-
-  for (i in 1:length(trmm.sp_m)){
-    plot(trmm.sp_m[[i]]~idw_ts[[i]], xlim=c(0,20), ylim=c(0,20), xlab="IDW (mm/day)", ylab="TRMM3B42 (mm/day)")
-    abline(0,1,col="red",lwd=2) 
-  }
-
+  monthly.sp.comp=list()
+  for (i in 1:length(idw.d_ts)){
+    monthly.sp.comp[[i]]=cbind(idw.m_ts[[i]],cmorph.sp.m_ts[[i]], persiann.sp.m_ts[[i]], trmm.sp.m_ts[[i]])}
+  names(monthly.sp.comp)=names(idw.d_ts)
+  
+  png(filename=paste(fpath,"/monthly_sp_scatterplot.png", sep=""), pointsize = 11, width=16, height=15, units="cm", res=300)
+  scatter.grid(monthly.sp.comp, xylim=c(0,22), leftsidetext="IDW interpolation (mm/day)")
+  dev.off()
 # Yearly
+  yearly.sp.comp=list()
+  for (i in 1:length(idw.d_ts)){
+    yearly.sp.comp[[i]]=cbind(idw.y_ts[[i]],cmorph.sp.y_ts[[i]], persiann.sp.y_ts[[i]], trmm.sp.y_ts[[i]])}
+  names(yearly.sp.comp)=names(idw.d_ts)
+  png(filename=paste(fpath,"/yearly_sp_scatterplot.png", sep=""), pointsize = 11, width=16, height=15, units="cm", res=300)
+  scatter.grid(yearly.sp.comp, xylim=c(6,13), leftsidetext="IDW interpolation (mm/day)")
+  dev.off()
 
 #### END ####
 library("sp")
