@@ -6,6 +6,8 @@
   library("raster")
   library("zoo")
   library("rts")
+  
+  projection=CRS(projection(trmm))
 ### Load shapefiles ###
   shps=list(
       readShapePoly(fn="input//gis//tayan-shp//tayan-shp.shp", proj4string=projection),

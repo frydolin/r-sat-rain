@@ -10,18 +10,18 @@ source("scripts/functions.R")
 ## see README for variable naming convention 
 ## aggregation with mean i.e. output is average daily rainfall per week, month, year, ... ##
 ## na.rm currently FALSE 
-
+dir.create("output/aggregated/")
 #cmorph
-  opath="output/cmorph"
+  opath="output/aggregated/cmorph"
   dir.create(opath)
   cmorph.ag=basic.aggregate(cmorph.ts, fun=mean, na.rm=TRUE, opath=opath, stnames=stations_shp$ID)
 #persiann
-  opath="output/persiann"
+  opath="output/aggregated/persiann"
   dir.create(opath)
   persiann.ag=basic.aggregate(persiann.ts, fun=mean, na.rm=TRUE, opath=opath, stnames=stations_shp$ID)
 
 #trmm3b42
-  opath="output/trmm"
+  opath="output/aggregated/trmm"
   dir.create(opath)
   trmm.ag=basic.aggregate(trmm.ts, fun=mean, na.rm=TRUE, opath=opath, stnames=stations_shp$ID)
 

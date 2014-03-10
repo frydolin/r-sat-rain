@@ -1,10 +1,12 @@
 ###### SATELLITE PRECIPITATION ESTIMATES – ASSESSING FEASABILITY FOR KAPUAS CATCHMENT ######
 
-## compare.R compares satellite and ground data ##
-source("scripts/graphic_pars.R")
-#### CORRELATION ####
-fpath="output/point-to-pixel"
-dir.create(fpath)
+## compare.R compares satellite and ground data on point to pixel##
+#### SET UP ####
+  source("scripts/graphic_pars.R")
+
+  fpath="output/point-to-pixel"
+  dir.create(fpath)
+
 #### CORRELOGRAMS ####
 fpath="output/point-to-pixel/correlograms"
 dir.create(fpath)
@@ -23,43 +25,42 @@ rm(fpath, i, stname)
 #### SCATTERPLOT MATRIX ####
 fpath="output/point-to-pixel/scatterplotmatrix"
 dir.create(fpath)
-for (i in 1:length(daily.comp))
-{
-  stname=names(daily.comp)[i]
-  sat.scatterMatrix(daily.comp[[i]], xylim=c(0,150), type="daily", 
-                    fpath=fpath, station=stname)
-  sat.scatterMatrix(monthly.comp[[i]], xylim=c(0,25),type="monthly", 
-                    fpath=fpath, station=stname)
-  sat.scatterMatrix(yearly.comp[[i]], xylim=c(0,20), type="yearly", 
-                    fpath=fpath,station=stname) 
-}
-dev.off()
+
+  for (i in 1:length(daily.comp))
+  {
+    stname=names(daily.comp)[i]
+    sat.scatterMatrix(daily.comp[[i]], xylim=c(0,150), type="daily", 
+                      fpath=fpath, station=stname)
+    sat.scatterMatrix(monthly.comp[[i]], xylim=c(0,25),type="monthly", 
+                      fpath=fpath, station=stname)
+    sat.scatterMatrix(yearly.comp[[i]], xylim=c(0,20), type="yearly", 
+                      fpath=fpath,station=stname) 
+  }
 rm(fpath, i)
 ### END SCATTERPLOT MATRIX ###
-### END CORRELATION###
 
 #### SCATTERPLOT OVERVIEW PER SRFE ####
-fpath="output/point-to-pixel"
+fpath="output/point-to-pixel/scattergrids"
+dir.create(fpath)
 # For daly data
-  png(filename="output/daily_allscatterplots.png", pointsize = 11, width=10, height=20, units="cm", res=300)
+  png(filename=paste(fpath,"/daily_allscatterplots.png", sep=""), pointsize = 11, width=10, height=20, units="cm", res=300)
  scatter.grid(daily.comp, xylim=c(0,120))
   dev.off()
 # For monthly data
-  png(filename="output/monthly_allscatterplots.png", pointsize = 11, width=10, height=20, units="cm", res=300)
+  png(filename=paste(fpath,"/monthly_allscatterplots.png", sep=""), pointsize = 11, width=10, height=20, units="cm", res=300)
  scatter.grid(monthly.comp, xylim=c(0,24))
   dev.off()
 # yearly data
-  png(filename="output/yearly_allscatterplots.png", pointsize = 11, width=10, height=20, units="cm", res=300)
+  png(filename=paste(fpath,"/yearly_allscatterplots.png", sep=""), pointsize = 11, width=10, height=20, units="cm", res=300)
  scatter.grid(yearly.comp, xylim=c(4,14))
   dev.off()
 ###
 #### PEARSON CORRELATION PER SRFE ####
+fpath="output/point-to-pixel/scattergrids"
   write.csv(pairw.corr(daily.comp), file=paste(fpath,"/daily_cor.csv", sep=""))
   write.csv(pairw.corr(monthly.comp), file=paste(fpath,"/monthly_cor.csv", sep=""))
   write.csv(pairw.corr(yearly.comp), file=paste(fpath,"/yearly_cor.csv", sep=""))
 ###
 
-plot(daily.comp[1][[1]][2,], type="l")
-str(daily.comp[[1]][1,])
-class(daily.comp[[1]])
+rm(fpath, stname)
 ########## END compare.R #############

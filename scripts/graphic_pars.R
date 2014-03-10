@@ -10,10 +10,11 @@ par(family="Lato",
     mgp=c(1.8,0.6,0))
 def.par=par(no.readonly = TRUE)
 #### COLOR SCHEME for plots ####
-col.fun <- colorRampPalette(c("#D7635D","peachpuff","royalblue","#023b95"))
-rast.cols=col.fun(20)
-rast.theme<-rasterTheme(region=rast.cols, cex=0.8)
- label.theme <- list(add.text=list(cex=0.9,fontfamily='Lato'))
+  col.fun <- colorRampPalette(c("#af5752","peachpuff","royalblue","#0f1c66"))
+  rast.cols=col.fun(20)
+  require("rasterVis")
+  rast.theme<-rasterTheme(region=rast.cols, cex=0.8)
+  label.theme <- list(add.text=list(cex=0.9,fontfamily='Lato'))
 
 
 # For 14 colors
