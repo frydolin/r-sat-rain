@@ -142,4 +142,11 @@ pairw.corr=function(x){
   return(corrs)
 }
 
+#### own version of levelplot with layers ####
+ llplot=function(x, ...){
+   require("rasterVis")
+   require("maptools")
+   source("scripts//graphic_pars.R")
+  levelplot(x, par.settings=rast.theme, margin=FALSE, ...)+ layer(sp.polygons(obj=subcatch_shp, lwd=0.5, col="#555555"))+layer(sp.polygons(kapuas_shp, lwd=0.5, col="#222222"))+ layer(sp.points(stations_shp, col="black", cex=0.5))+ layer(sp.pointLabel(stations_shp, label=stations_shp$ID),theme=label.theme)
+}
 #### END functions.R ####
