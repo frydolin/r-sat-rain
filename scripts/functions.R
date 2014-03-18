@@ -64,32 +64,33 @@ basic.aggregate=function(x, fun, na.rm=FALSE, opath, stnames){
   return(output)
 }
 ####
-#### corgr ####
-# own version of correlograms made by corrgram
-# corgr creates *.png files in fpath
-## make sure directory exists!
-## x: should be a data matrix (as in the normal corrgram() function)
-## type: is only for naming e.g. daily, monthly 
-sat.corgr=function(x, type, fpath, station){
-  require("corrgram")
-  name=paste(fpath,"/",type,"_corgr_",station,".png", sep ="")  # filename
-  png(filename=name, pointsize = 11, width=16, height=16, units="cm", res=300)  # open *.svg write
-  corrgram(x, lower.panel=panel.pie, upper.panel=panel.conf, diag.panel=panel.density, main="", oma=c(0,0,0,0))
-  dev.off()  						# close write
-}
-###
-#### Scatterplot Matrix ####
-### panel.2lines function ###
+
+#### panel.2lines function ####
 # creates lines as input for a scatterplotmatrix
 # lm regression
 # 0,1 abline
 panel.2lines <- function(x,y,...) {
   points(y~x, cex=0.7)
-  abline(0,1,col="red")
-  abline(lm(y~x),col="darkblue")
+  abline(0,1,col="blue")
+  abline(lm(y~x),col="red")
+  box(col = "lightgray")
 }
 ###
-### scatterMatrix###
+#### corgr ####
+# own version of correlograms made by corrgram
+# corgr creates *.svg files in fpath
+## make sure directory exists!
+## x: should be a data matrix (as in the normal corrgram() function)
+## type: is only for naming e.g. daily, monthly 
+sat.corgr=function(x, type, xylim, fpath, station){
+  require("corrgram")
+  name=paste(fpath,"/",type,"_corgr_",station,".png", sep ="")  # filename
+  png(filename=name, pointsize = 11, width=16, height=16, units="cm", res=300)	# open *.png write
+  corrgram(x, lower.panel=panel.pie, upper.panel=panel.2lines, diag.panel=panel.density, xlim=xylim, ylim=xylim, main="", oma=c(0,0,0,0))
+  dev.off() #close write
+}
+###
+#### Scatterplot Matrix ####
 ## x: should be a data matrix (as in the normal corrgram() function)
 ## type: is only for naming e.g. daily, monthly 
 sat.scatterMatrix=function(x, xylim, type, fpath, station){
@@ -106,22 +107,24 @@ scatter.grid=function(x,xylim, leftsidetext="rainfall at gauge station (mm/day)"
   
   source("scripts//graphic_pars.R")
   par(def.par);
-  par(mar=c(0,0,0.2,0.2), oma=c(5,7.7,1.5,0), las=1); par(mfrow=c(length(x),3));
+  par(mar=c(0,0,0.3,0.3), oma=c(5,7.7,1.5,0), las=1); par(mfrow=c(length(x),3));
   par(cex.axis=1,  cex.lab=1)
 
   for (i in 1:(length(x))){
     if (i==length(x)){ax="s"} else {ax="n"}
-    plot(x[[i]][,1]~x[[i]][,2], xlim=xylim, ylim=xylim, xaxt=ax)
+    plot(x[[i]][,1]~x[[i]][,2], xlim=xylim, ylim=xylim, xaxt=ax, cex=0.8)
     if(i==1){mtext("CMORPH", side = 3, line = 0.2, cex=0.8)}
-    abline(0,1, col="red")
+    abline(0,1, col="#444444")
+    abline(lm(x[[i]][,1]~x[[i]][,2]),col="#aaaaaa")
     mtext(names(x[i]), side = 2, line = 1.8, cex=0.8)
-    plot(x[[i]][,1]~x[[i]][,3], xlim=xylim, ylim=xylim, yaxt="n", xaxt=ax)
+    plot(x[[i]][,1]~x[[i]][,3], xlim=xylim, ylim=xylim, yaxt="n", xaxt=ax, cex=0.8)
     if(i==1){mtext("PERSIANN", side = 3, line = 0.2, cex=0.8)}
-    abline(0,1, col="red")
-    plot(x[[i]][,1]~x[[i]][,4], xlim=xylim, ylim=xylim, yaxt="n", xaxt=ax)
+    abline(0,1, col="#444444")
+    abline(lm(x[[i]][,1]~x[[i]][,3]),col="#aaaaaa")
+    plot(x[[i]][,1]~x[[i]][,4], xlim=xylim, ylim=xylim, yaxt="n", xaxt=ax, cex=0.8)
     if(i==1){mtext("TRMM 3B42", side = 3, line = 0.2, cex=0.8)}
-    abline(0,1, col="red")
-    
+    abline(0,1, col="#444444")
+    abline(lm(x[[i]][,1]~x[[i]][,4]),col="#aaaaaa")
   }
   mtext(leftsidetext, side = 2, line = 6.5, cex=0.8, las=0, outer = TRUE, at = NA,  adj = 0.5, padj = 0.5)
   mtext("satellite rainfall estimate (mm/day)", side = 1, line =2, cex=0.8, outer = TRUE, adj = 0.5, padj = 0.5)
