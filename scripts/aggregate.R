@@ -43,7 +43,7 @@ rm(cmorph.ts, persiann.ts, trmm.ts) #they are now part of the *.ag lists
       (                  cbind(gdata$d_df[,i],cmorph.ag$d_df[,i], 
                          persiann.ag$d_df[,i],trmm.ag$d_df[,i])
       )
-    colnames(daily.comp[[i]])=c("Ground", "CMORPH", "PERSIANN", "TRMM")
+    colnames(daily.comp[[i]])=c("Ground", "CMORPH", "PERSIANN", "TRMM 3B42")
   }
 
 #monthly
@@ -54,7 +54,7 @@ rm(cmorph.ts, persiann.ts, trmm.ts) #they are now part of the *.ag lists
       (                  cbind(gdata$m_df[,i],cmorph.ag$m_df[,i], 
                          persiann.ag$m_df[,i], trmm.ag$m_df[,i])
       )
-    colnames(monthly.comp[[i]])=c("Ground", "CMORPH", "PERSIANN", "TRMM")
+    colnames(monthly.comp[[i]])=c("Ground", "CMORPH", "PERSIANN", "TRMM 3B42")
   }
 #yearly
   yearly.comp=list()
@@ -64,8 +64,31 @@ rm(cmorph.ts, persiann.ts, trmm.ts) #they are now part of the *.ag lists
       (                  cbind(gdata$y_df[,i],cmorph.ag$y_df[,i], 
                                persiann.ag$y_df[,i], trmm.ag$y_df[,i])
       )
-    colnames(yearly.comp[[i]])=c("Ground", "CMORPH", "PERSIANN", "TRMM")
+    colnames(yearly.comp[[i]])=c("Ground", "CMORPH", "PERSIANN", "TRMM 3B42")
   }
+###
+#### RAINDAYS ##
+raindays.month=function(x){
+  require("hydroTSM")
+  if (class(x[[1]]) != "zoo"){x=lapply(x, zoo, order.by=time.d)}
+  d.rainday<-lapply(x, function (x) ifelse(x>1, 1, 0))
+  m.rainday<-lapply(d.rainday, daily2monthly, sum, na.rm=FALSE)
+  m.rainday=mdf(m.rainday, coln=stations_shp$ID)}
+
+    cmorph.rd=raindays.month(cmorph.ts)
+    persiann.rd=raindays.month(persiann.ts)
+    trmm.rd=raindays.month(trmm.ts)
+    gdata.rd=raindays.month(gdata$d_df)
+raindays.comp=list()
+for (i in names(gdata$m_df))
+{
+  raindays.comp[[i]]=
+    (
+      cbind(gdata.rd[,i],cmorph.rd[,i],persiann.rd[,i], trmm.rd[,i])
+    )
+  colnames(raindays.comp[[i]])=c("Ground", "CMORPH", "PERSIANN", "TRMM 3B42")
+}
+rm(cmorph.rd, persiann.rd, trmm.rd, gdata.rd)
 ###
 #### CLEAN UP ####
 # remove variables and data not needed anymore
