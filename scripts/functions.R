@@ -103,7 +103,7 @@ sat.scatterMatrix=function(x, xylim, type, fpath, station){
 }
 ###
 #### scatter.grid####
-scatter.grid=function(x,xylim, leftsidetext="rainfall at gauge station (mm/day)"){
+scatter.grid=function(x,xylim, leftsidetext="rainfall at gauge station (mm/day)", bottomtext="satellite rainfall estimate (mm/day)"){
   
   source("scripts//graphic_pars.R")
   par(def.par);
@@ -112,22 +112,22 @@ scatter.grid=function(x,xylim, leftsidetext="rainfall at gauge station (mm/day)"
 
   for (i in 1:(length(x))){
     if (i==length(x)){ax="s"} else {ax="n"}
-    plot(x[[i]][,1]~x[[i]][,2], xlim=xylim, ylim=xylim, xaxt=ax, cex=0.8)
+    plot(x[[i]][,1]~x[[i]][,2], xlim=xylim, ylim=xylim, xaxt=ax, cex=0.7)
     if(i==1){mtext("CMORPH", side = 3, line = 0.2, cex=0.8)}
     abline(0,1, col="#444444")
     abline(lm(x[[i]][,1]~x[[i]][,2]),col="#aaaaaa")
     mtext(names(x[i]), side = 2, line = 1.8, cex=0.8)
-    plot(x[[i]][,1]~x[[i]][,3], xlim=xylim, ylim=xylim, yaxt="n", xaxt=ax, cex=0.8)
+    plot(x[[i]][,1]~x[[i]][,3], xlim=xylim, ylim=xylim, yaxt="n", xaxt=ax, cex=0.7)
     if(i==1){mtext("PERSIANN", side = 3, line = 0.2, cex=0.8)}
     abline(0,1, col="#444444")
     abline(lm(x[[i]][,1]~x[[i]][,3]),col="#aaaaaa")
-    plot(x[[i]][,1]~x[[i]][,4], xlim=xylim, ylim=xylim, yaxt="n", xaxt=ax, cex=0.8)
+    plot(x[[i]][,1]~x[[i]][,4], xlim=xylim, ylim=xylim, yaxt="n", xaxt=ax, cex=0.7)
     if(i==1){mtext("TRMM 3B42", side = 3, line = 0.2, cex=0.8)}
     abline(0,1, col="#444444")
     abline(lm(x[[i]][,1]~x[[i]][,4]),col="#aaaaaa")
   }
   mtext(leftsidetext, side = 2, line = 6.5, cex=0.8, las=0, outer = TRUE, at = NA,  adj = 0.5, padj = 0.5)
-  mtext("satellite rainfall estimate (mm/day)", side = 1, line =2, cex=0.8, outer = TRUE, adj = 0.5, padj = 0.5)
+  mtext(bottomtext, side = 1, line =2, cex=0.8, outer = TRUE, adj = 0.5, padj = 0.5)
 }
 ###
 #### pairw.corr ####

@@ -48,17 +48,22 @@ rm(fpath, i)
 fpath="output/point-to-pixel/scattergrids"
 dir.create(fpath)
 # For daly data
-  png(filename=paste(fpath,"/daily_allscatterplots.png", sep=""), pointsize = 11, width=9.5, height=24, units="cm", res=300)
+  png(filename=paste(fpath,"/daily_allscatterplots.png", sep=""), pointsize = 11, width=9, height=23, units="cm", res=300)
  scatter.grid(daily.comp, xylim=c(0,160))
   dev.off()
 # For monthly data
-  png(filename=paste(fpath,"/monthly_allscatterplots.png", sep=""), pointsize = 11, width=9.5, height=24, units="cm", res=300)
+  png(filename=paste(fpath,"/monthly_allscatterplots.png", sep=""), pointsize = 11, width=9, height=23, units="cm", res=300)
  scatter.grid(monthly.comp, xylim=c(0,25))
   dev.off()
 # yearly data
-  png(filename=paste(fpath,"/yearly_allscatterplots.png", sep=""), pointsize = 11, width=9.5, height=24, units="cm", res=300)
+  png(filename=paste(fpath,"/yearly_allscatterplots.png", sep=""), pointsize = 11, width=9, height=23, units="cm", res=300)
  scatter.grid(yearly.comp, xylim=c(4.5,14))
   dev.off()
+
+#raindays
+png(filename=paste(fpath,"/monthly_raindays_allscatterplots.png", sep=""), pointsize = 11, width=9, height=23, units="cm", res=300)
+scatter.grid(raindays.comp, xylim=c(0,31), leftsidetext="No. of raindays at gauge station", bottomtext="No. of raindays of satellite rainfall estimate")
+dev.off()
 ###
 
 #### PEARSON CORRELATION PER SRFE ####
