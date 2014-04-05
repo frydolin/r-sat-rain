@@ -1,6 +1,8 @@
-######### SATELLITE PRECIPITATION ESTIMATES – ASSESSING FEASABILITY FOR KAPUAS CATCHMENT ######
+###### SPATIO-TEMPORAL RAINFALL PATTERNS IN KAPUAS BASIN ######
+	### ASSESSING USEFULNESS OF SATELLITE PRECIPITATION ESTIMATES ###
 
-## functions.R contains self written functions for the analysis ##
+## functions.R:
+## contains self written functions for the analysis
 
 #### mdf ####
 ## Coerce zoo time series to data frames: mdf (make data frame)#
@@ -15,9 +17,8 @@ mdf=function(x, coln=stnames){
 ###
 
 #### basic.aggregate ####
-## creates basic summaries and variables to be analysed
-## and outputs summary tables 
-## variable names explained in the README
+# creates basic summaries and variables to be analysed and outputs summary tables 
+# variable names explained in the README
 ## x: list of zoo TS objects with daily or monthly time step
 ## fun: mean or sum
 ## na.rm: TRUE/FALSE, default=FALSE
@@ -63,25 +64,29 @@ basic.aggregate=function(x, fun, na.rm=FALSE, opath, stnames){
   names(output)=c("d_ts", "d_df", "m_ts", "m_df", "y_ts", "y_df", "davbm", "davbm_df")
   return(output)
 }
-####
+###
 
-#### panel.2lines function ####
-# creates lines as input for a scatterplotmatrix
-# lm regression
-# 0,1 abline
+#### panel.2lines ####
+# xy-plot with regression line and bisecting line, used in a scatterplotmatrix or corrgram panel (see below)
+## x: x values
+## y: y values
+## ...: further arguments passed on
 panel.2lines <- function(x,y,...) {
   points(y~x, cex=0.7)
-  abline(0,1,col="blue")
-  abline(lm(y~x),col="red")
+  abline(0,1,col="blue") # bisecting line
+  abline(lm(y~x),col="red") # regression with linear model
   box(col = "lightgray")
 }
 ###
-#### corgr ####
-# own version of correlograms made by corrgram
-# corgr creates *.svg files in fpath
-## make sure directory exists!
-## x: should be a data matrix (as in the normal corrgram() function)
+
+#### sat.corgr ####
+# Creates Correlograms. Basically a wrapper function for corrgram::corrgram, with own specifications.
+# sat.corgr creates *.png files in fpath, make sure directory exists!
+## x: should be data matrix (as in the normal corrgram() function)
+## xylim: vector with two components, for xlim and ylim, in order to have same scaling on both axes
 ## type: is only for naming e.g. daily, monthly 
+## fpath: character, output file path
+## station: stationname of station to be plotted, only for naming
 sat.corgr=function(x, type, xylim, fpath, station){
   require("corrgram")
   name=paste(fpath,"/",type,"_corgr_",station,".png", sep ="")  # filename
@@ -90,21 +95,32 @@ sat.corgr=function(x, type, xylim, fpath, station){
   dev.off() #close write
 }
 ###
-#### Scatterplot Matrix ####
-## x: should be a data matrix (as in the normal corrgram() function)
+
+#### sat.scatterMatrix ####
+# Creates a Scatterplot Matrix. Basically a wrapper for graphics::pairs.
+## x: should be a data matrix, its columns are plotted against each other
+## xylim: vector with two components, for xlim and ylim, in order to have same scaling on both axes
 ## type: is only for naming e.g. daily, monthly 
+## fpath: character, output file path
+## station: stationname of station to be plotted, only for naming
 sat.scatterMatrix=function(x, xylim, type, fpath, station){
   name=paste(fpath,"/",type,"_scatter_",station,".png", sep ="")  # filename
   png(filename=name, pointsize = 11, width=16, height=16, units="cm", res=300) # open *.png write
   pairs(x, upper.panel=NULL, lower.panel=panel.2lines, xlim=xylim, ylim=xylim, 
         las=1, gap=0.3, oma=c(2.5,2.5,0,0), cex.labels=1.5, family="Lato"
   )
-  dev.off()  # close write			# close write
+  dev.off()  # close write
 }
 ###
-#### scatter.grid####
+
+#### scatter.grid ####
+# Creates graphic of 3*n scatterplots
+# First column of a matrix is plotted against three other columns for n matrices
+## x: list of matrixes
+## xylim: vector with two components, for xlim and ylim, in order to have same scaling on both axes
+## leftsidetext: text for labeling the y-axis
+## bottomtext: text for labeling the x-axis
 scatter.grid=function(x,xylim, leftsidetext="rainfall at gauge station (mm/day)", bottomtext="satellite rainfall estimate (mm/day)"){
-  
   source("scripts//graphic_pars.R")
   par(def.par);
   par(mar=c(0,0,0.3,0.3), oma=c(5,7.7,1.5,0), las=1); par(mfrow=c(length(x),3));
@@ -130,7 +146,9 @@ scatter.grid=function(x,xylim, leftsidetext="rainfall at gauge station (mm/day)"
   mtext(bottomtext, side = 1, line =2, cex=0.8, outer = TRUE, adj = 0.5, padj = 0.5)
 }
 ###
+
 #### pairw.corr ####
+# Calculates correlation of first column of a matrix to its other columns, for n matrices
 ## x: list of matrices
 ## in that matrix first row is compared to other rows
 pairw.corr=function(x){ 
@@ -144,12 +162,18 @@ pairw.corr=function(x){
   dimnames(corrs)=list(c("CMORPH", "PERSIANN", "TRMM 3B42"),c(names(x)))
   return(corrs)
 }
+###
 
-#### own version of levelplot with layers ####
- llplot=function(x, ...){
+#### llplot ####
+# own version of levelplot with layers 
+## x: raster map to be plotted
+## ...: other paramters passed on
+llplot=function(x, ...){
    require("rasterVis")
    require("maptools")
    source("scripts//graphic_pars.R")
   levelplot(x, par.settings=rast.theme, margin=FALSE, ...)+ layer(sp.polygons(obj=subcatch_shp, lwd=0.5, col="#555555"))+layer(sp.polygons(kapuas_shp, lwd=0.5, col="#222222"))+ layer(sp.points(stations_shp, col="black", cex=0.5))+ layer(sp.pointLabel(stations_shp, label=stations_shp$ID),theme=label.theme)
 }
-#### END functions.R ####
+###
+
+###### END functions.R ######

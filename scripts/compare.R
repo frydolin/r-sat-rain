@@ -1,15 +1,20 @@
-###### SATELLITE PRECIPITATION ESTIMATES – ASSESSING FEASABILITY FOR KAPUAS CATCHMENT ######
+###### SPATIO-TEMPORAL RAINFALL PATTERNS IN KAPUAS BASIN ######
+	### ASSESSING USEFULNESS OF SATELLITE PRECIPITATION ESTIMATES ###
 
-## compare.R compares satellite and ground data on point to pixel##
+## compare.R:
+## compares satellite and ground data on point to pixel levelplot
+## check functions.R in order to get details about the functions used
+
 #### SET UP ####
   source("scripts/graphic_pars.R")
   source("scripts/functions.R")
   fpath="output/point-to-pixel"
   dir.create(fpath)
 
-# get maxes and mins to sed xylim
+# get maxes and mins to set xylim corrrectly
 # max(unlist(lapply(monthly.comp,max, na.rm=TRUE)))
 # min(unlist(lapply(monthly.comp,min, na.rm=TRUE)))
+###
 
 #### CORRELOGRAMS ####
 # -> 1 example in main text, rest DA
@@ -60,10 +65,10 @@ dir.create(fpath)
  scatter.grid(yearly.comp, xylim=c(4.5,14))
   dev.off()
 
-#raindays
-png(filename=paste(fpath,"/monthly_raindays_allscatterplots.png", sep=""), pointsize = 11, width=9, height=23, units="cm", res=300)
-scatter.grid(raindays.comp, xylim=c(0,31), leftsidetext="No. of raindays at gauge station", bottomtext="No. of raindays of satellite rainfall estimate")
-dev.off()
+# raindays
+	png(filename=paste(fpath,"/monthly_raindays_allscatterplots.png", sep=""), pointsize = 11, width=9, height=23, units="cm", res=300)
+	scatter.grid(raindays.comp, xylim=c(0,31), leftsidetext="No. of raindays at gauge station", bottomtext="No. of raindays of satellite rainfall estimate")
+	dev.off()
 ###
 
 #### PEARSON CORRELATION PER SRFE ####
@@ -73,5 +78,8 @@ fpath="output/point-to-pixel/scattergrids"
   write.csv(pairw.corr(yearly.comp), file=paste(fpath,"/yearly_cor.csv", sep=""))
 ###
 
+#### CLEAN UP ####
 rm(fpath, stname)
-########## END compare.R #############
+###
+
+###### END compare.R ######
