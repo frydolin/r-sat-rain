@@ -14,22 +14,20 @@
 	## aggregation with mean i.e. output is average daily rainfall per month, year, ... 
 	## na.rm currently TRUE (the satellite data contains almost no NAs)
 	## see functions.R for details to basic.aggregate() function used here
-	dir.create("output/aggregated/")
+	dir.create("output/aggregation/")
 	#cmorph
-		opath="output/aggregated/cmorph"
+		opath="output/aggregation/cmorph"
 		dir.create(opath)
 		cmorph.ag=basic.aggregate(cmorph.ts, fun=mean, na.rm=TRUE, opath=opath, stnames=stations_shp$ID) 
 	#persiann
-		opath="output/aggregated/persiann"
+		opath="output/aggregation/persiann"
 		dir.create(opath)
 		persiann.ag=basic.aggregate(persiann.ts, fun=mean, na.rm=TRUE, opath=opath, stnames=stations_shp$ID)
 
 	#trmm3b42
-		opath="output/aggregated/trmm"
+		opath="output/aggregation/trmm"
 		dir.create(opath)
 		trmm.ag=basic.aggregate(trmm.ts, fun=mean, na.rm=TRUE, opath=opath, stnames=stations_shp$ID)
-
-	rm(cmorph.ts, persiann.ts, trmm.ts) #they are now part of the *.ag lists
 ###
 
 #### SUBSET GROUND DATA ####
@@ -83,7 +81,8 @@ raindays.month=function(x){
   if (class(x[[1]]) != "zoo"){x=lapply(x, zoo, order.by=time.d)}
   d.rainday<-lapply(x, function (x) ifelse(x>1, 1, 0))
   m.rainday<-lapply(d.rainday, daily2monthly, sum, na.rm=FALSE)
-  m.rainday=mdf(m.rainday, coln=stations_shp$ID)}
+  m.rainday=mdf(m.rainday, coln=stations_shp$ID)
+  }
   
 	# get raindays:
   cmorph.rd=raindays.month(cmorph.ts)
@@ -107,8 +106,9 @@ raindays.month=function(x){
 
 #### CLEAN UP ####
 # remove variables and data not needed anymore
+  rm(cmorph.ts, persiann.ts, trmm.ts) #they are now part of the *.ag lists
 	rm(i)
-	rm(opath, fpath) 
+	rm(opath) 
 ###
 
 ###### END aggregate.R ######

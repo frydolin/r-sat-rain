@@ -56,7 +56,7 @@ time.y=seq(as.Date("2001-01-01"), as.Date("2012-12-31"), by="year")
   # Read into a list
   gdata=lapply(files, read.csv, na.strings = "NA", row.names=1)
   names(gdata)=c("d_df", "m_df", "y_df")
-	rm(files)
+	rm(files,fpath)
 ### END LOAD GROUND DATA ###
 
 ###### END read.R ######

@@ -1,1 +1,59 @@
-######### SATELLITE PRECIPITATION ESTIMATES – ASSESSING FEASABILITY FOR KAPUAS CATCHMENT ######
+###### 	R project for:
+###### SPATIO-TEMPORAL RAINFALL PATTERNS IN KAPUAS BASIN ######
+	### ASSESSING USEFULNESS OF SATELLITE PRECIPITATION ESTIMATES ###
+
+### R FILES ###
+See also the project_scheme.svg file to get an overview over the project structure
+
+	+ run.R	executes the analysis, it calls further scripts:
+					run.R is the only file that needs to be run for a complete default analysis. Computation time can be over 10 minutes.
+
+	+ read.R				loads in all the data and converts to appropriate formats ##
+	+ aggregate.R		creates all necessary summaries and variables to be analysed ##
+	+ analyse.R			plots summaries to output ##
+	+ compare.R			plots comparative plots to output
+
+	Called from within these files:
+	+ graphic_pars.R	graphical parameters
+	+ functions.R			contains own functions for the analysis
+###
+
+### FOLDER STRUCTURE ###
+ /input		# contains input data
+ /output		# where output is written to
+ /scripts		# all R scripts
+ other folders are created automatically
+###
+
+### REQUIRED PACKAGES ###
+attached base packages:
+ grid      stats     graphics  grDevices utils     datasets  methods  
+ base     
+
+other attached packages:
+ corrgram_1.5        seriation_1.0-11    colorspace_1.2-4   
+ gclus_1.3.1         TSP_1.0-8           cluster_1.14.4     
+ rasterVis_0.24      hexbin_1.26.3       latticeExtra_0.6-26
+ RColorBrewer_1.0-5  lattice_0.20-24     hydroTSM_0.4-1     
+ xts_0.9-7           zoo_1.7-10          maptools_0.8-27    
+ ncdf4_1.10          raster_2.1-49       sp_1.0-14          
+
+loaded via a namespace (and not attached):
+ automap_1.0-14   class_7.3-9      e1071_1.6-1      foreign_0.8-57  
+ gstat_1.0-17     intervals_0.14.0 reshape_0.8.4    spacetime_1.0-9 
+ tools_3.0.2    
+###
+
+### COMMON VARIABLE PRE-/SUFFIX ABBREVIATIONS ###
+ d: 	day(ly)
+ m: 	month(ly)
+ y: 	year(ly)
+ rs:	rainy season
+ ds: 	dry season
+ rd:	rain day
+ ts: 	time series (zoo object)
+ s: 	sum
+ df: 	data frame/matrix
+###
+	 
+###### END README ######

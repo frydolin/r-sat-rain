@@ -124,7 +124,7 @@
   srfe_subcatch.da.recrop=lapply(srfe_subcatch.da, crop, extnt)
   # Mask:
   mask.srfe_subcatch <-lapply(srfe_subcatch.da.recrop, raster::mask, mask=subcatch_shp)
-  rm(srfe_subcatch.da,srfe_subcatch.da.recrop)
+  rm(srfe_subcatch.da,srfe_subcatch.da.recrop, ext)
 ###
    
 #### AGGREGATING ####

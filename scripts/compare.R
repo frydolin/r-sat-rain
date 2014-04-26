@@ -2,24 +2,23 @@
 	### ASSESSING USEFULNESS OF SATELLITE PRECIPITATION ESTIMATES ###
 
 ## compare.R:
-## compares satellite and ground data on point to pixel levelplot
+## compares satellite and ground data on point to pixel level
 ## check functions.R in order to get details about the functions used
 
 #### SET UP ####
   source("scripts/graphic_pars.R")
   source("scripts/functions.R")
-  fpath="output/point-to-pixel"
-  dir.create(fpath)
 
-# get maxes and mins to set xylim corrrectly
+  fpath="output/point-to-pixel_comparison"
+  dir.create(fpath)
+# get maxes and mins to set xylims corrrectly
 # max(unlist(lapply(monthly.comp,max, na.rm=TRUE)))
 # min(unlist(lapply(monthly.comp,min, na.rm=TRUE)))
 ###
 
 #### CORRELOGRAMS ####
-# -> 1 example in main text, rest DA
-fpath="output/point-to-pixel/correlograms"
-dir.create(fpath)
+  fpath="output/point-to-pixel_comparison/correlograms"
+  dir.create(fpath)
   
   for (i in 1:length(daily.comp))
   {
@@ -32,8 +31,8 @@ dir.create(fpath)
 rm(fpath, i, stname)
 ### END CORRGRAMS ###
 
-#### SCATTERPLOT MATRIX ####
-fpath="output/point-to-pixel/scatterplotmatrix"
+#### SCATTERPLOT MATRICES ####
+fpath="output/point-to-pixel_comparison/scatterplotmatrices"
 dir.create(fpath)
 
   for (i in 1:length(daily.comp))
@@ -49,33 +48,33 @@ dir.create(fpath)
 rm(fpath, i)
 ### END SCATTERPLOT MATRIX ###
 
-#### SCATTERPLOT OVERVIEW PER SRFE ####
-fpath="output/point-to-pixel/scattergrids"
+#### SCATTERPLOTS GIVING AN OVERVIEW PER SRFE ####
+fpath="output/point-to-pixel_comparison/scattergrids"
 dir.create(fpath)
 # For daly data
-  png(filename=paste(fpath,"/daily_allscatterplots.png", sep=""), pointsize = 11, width=9, height=23, units="cm", res=300)
+  png(filename=paste(fpath,"/daily_scatterplots.png", sep=""), pointsize = 11, width=9, height=23, units="cm", res=300)
  scatter.grid(daily.comp, xylim=c(0,160))
   dev.off()
 # For monthly data
-  png(filename=paste(fpath,"/monthly_allscatterplots.png", sep=""), pointsize = 11, width=9, height=23, units="cm", res=300)
+  png(filename=paste(fpath,"/monthly_scatterplots.png", sep=""), pointsize = 11, width=9, height=23, units="cm", res=300)
  scatter.grid(monthly.comp, xylim=c(0,25))
   dev.off()
 # yearly data
-  png(filename=paste(fpath,"/yearly_allscatterplots.png", sep=""), pointsize = 11, width=9, height=23, units="cm", res=300)
+  png(filename=paste(fpath,"/yearly_scatterplots.png", sep=""), pointsize = 11, width=9, height=23, units="cm", res=300)
  scatter.grid(yearly.comp, xylim=c(4.5,14))
   dev.off()
 
 # raindays
-	png(filename=paste(fpath,"/monthly_raindays_allscatterplots.png", sep=""), pointsize = 11, width=9, height=23, units="cm", res=300)
+	png(filename=paste(fpath,"/monthly_raindays_scatterplots.png", sep=""), pointsize = 11, width=9, height=23, units="cm", res=300)
 	scatter.grid(raindays.comp, xylim=c(0,31), leftsidetext="No. of raindays at gauge station", bottomtext="No. of raindays of satellite rainfall estimate")
 	dev.off()
 ###
 
-#### PEARSON CORRELATION PER SRFE ####
-fpath="output/point-to-pixel/scattergrids"
-  write.csv(pairw.corr(daily.comp), file=paste(fpath,"/daily_cor.csv", sep=""))
-  write.csv(pairw.corr(monthly.comp), file=paste(fpath,"/monthly_cor.csv", sep=""))
-  write.csv(pairw.corr(yearly.comp), file=paste(fpath,"/yearly_cor.csv", sep=""))
+#### PEARSON CORRELATION COEFFICIENTS PER SRFE ####
+fpath="output/point-to-pixel_comparison/"
+  write.csv(pairw.corr(daily.comp), file=paste(fpath,"/daily_cor_coef.csv", sep=""))
+  write.csv(pairw.corr(monthly.comp), file=paste(fpath,"/monthly_cor_coef.csv", sep=""))
+  write.csv(pairw.corr(yearly.comp), file=paste(fpath,"/yearly_cor_coef.csv", sep=""))
 ###
 
 #### CLEAN UP ####

@@ -3,8 +3,11 @@
 	### SPATIAL COMPARISON ####
 
 #### SET UP ####
-library("hydroTSM")
-source("scripts//functions.R")
+  library("hydroTSM")
+  source("scripts//functions.R")
+  
+  fpath="output/spatial_comparison"
+  dir.create(fpath)
 ###
 
 #### PART I COMPARE WITH INTERPOLATED CATCHMENT TOTALS####
@@ -23,7 +26,7 @@ source("scripts//functions.R")
   
   #### COMPARATIVE SCATTERPLOTS ####
   # with scatter.grid function
-  fpath="output/spatial_comparison"
+  fpath="output/spatial_comparison/correlation"
   dir.create(fpath)
   # Daily
     # make appropriate data structure:
@@ -54,13 +57,13 @@ source("scripts//functions.R")
     scatter.grid(yearly.sp.comp, xylim=c(6,13), leftsidetext="IDW interpolation (mm/day)")
     dev.off()
   ###
-  
+
   #### PEARSON CORRELATION COEFFICIENTS ####
-  fpath="output/spatial_comparison"
   write.csv(pairw.corr(daily.sp.comp), file=paste(fpath,"/daily_cor.csv", sep=""))
   write.csv(pairw.corr(monthly.sp.comp), file=paste(fpath,"/monthly_cor.csv", sep=""))
   write.csv(pairw.corr(yearly.sp.comp), file=paste(fpath,"/yearly_cor.csv", sep=""))
   ###
+rm(fpath)
 ### END PART I ###
 
 #### PART II: COMPARE ON MAP LEVEL ####
@@ -68,12 +71,12 @@ source("scripts//functions.R")
   load(file="input//interpolation_results/subcatch.idw.bymonth")
   load(file="input//interpolation_results/subcatch.idw.ov.av")
   # change extents to match the ones of the satellite imagery
-  subcatch.idw.bymonth=extend(x=subcatch.idw.bymonth, y=extnt)
+  subcatch.idw.bymonth=extend(x=subcatch.idw.bymonth, y=extnt) # a warning appears, still a correct result is obtained
   subcatch.idw.ov.av=extend(x=subcatch.idw.ov.av@raster, y=extnt)
 	###
 	
 	#### PLOT MONTHLY VALUES OF PEAK RAINY AND PEAK DRY SEASON ####
-	fpath="output/spatial_comparison/month"
+	fpath="output/spatial_comparison/months"
 	dir.create(fpath)
 #		## appropirate scaling
 #   levelplot(... at=scaling,...)
@@ -119,7 +122,7 @@ source("scripts//functions.R")
 	###
 
 	#### PLOT LONG TERM MEANS ###
-	fpath="output/spatial_comparison/lta"
+	fpath="output/spatial_comparison/long-term-average"
 	dir.create(fpath)
 #		## appropirate scaling
 #   lapply(subcatch.srfe.ov.av, function(x) cellStats(x@raster, max))
@@ -146,6 +149,8 @@ source("scripts//functions.R")
 ### END PART II ###
 
 #### CLEAN UP ####
-rm(fpath)
+rm(fpath, name)
+rm(i)
+rm(scaling)
 ###
 ###### END spatial_compare.R ######
